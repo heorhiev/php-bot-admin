@@ -7,6 +7,7 @@
 
 namespace app\commands;
 
+use app\helpers\ErrorHelper;
 use app\helpers\TelegramHelper;
 use app\models\Contact;
 use app\models\Log;
@@ -28,16 +29,8 @@ class SenderController extends Controller
                 $message->setSentStatus();
                 Log::add('Сделана рассылка сообщения ' . $message->id);
             } catch (\Throwable $throwable) {
-                $error = join(PHP_EOL, [
-                    $throwable->getMessage(),
-                    $throwable->getFile(),
-                    $throwable->getLine()
-                ]);
-
-                Log::add('Ошибка отправки ' . $message->id, $error);
-
-                \Yii::error($error);
-                print_r($error);
+                Log::add('Ошибка отправки ' . $message->id, ErrorHelper::getErrorText($throwable));
+                \Yii::error(ErrorHelper::getErrorText($throwable));
                 $message->setErrorStatus();
             }
 

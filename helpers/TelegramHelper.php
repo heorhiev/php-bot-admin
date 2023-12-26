@@ -2,6 +2,8 @@
 
 namespace app\helpers;
 
+use app\models\Contact;
+use app\models\Log;
 use app\models\Message;
 use TelegramBot\Api\Exception;
 use TelegramBot\Api\InvalidArgumentException;
@@ -21,8 +23,12 @@ class TelegramHelper
     public static function send(array $chatIds, Message $message): bool
     {
         foreach ($chatIds as $chatId) {
-            self::sendMessage($chatId, $message->getFilesInfo());
-            self::sendFiles($chatId, $message->getFilesInfo());
+            try {
+                self::sendMessage($chatId, $message->text);
+                self::sendFiles($chatId, $message->getFilesInfo());
+            } catch (\Throwable $throwable) {
+                Log::add('Ошибка отправки ' . $message->id . ' пользователю ' . $chatId, ErrorHelper::getErrorText($throwable));
+            }
         }
 
         return true;
