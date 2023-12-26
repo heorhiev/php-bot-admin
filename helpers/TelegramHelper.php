@@ -2,7 +2,6 @@
 
 namespace app\helpers;
 
-use app\models\Contact;
 use app\models\Log;
 use app\models\Message;
 use TelegramBot\Api\Exception;

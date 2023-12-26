@@ -16,8 +16,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'text')->textarea() ?>
 
-    <?= $form->field($model, 'uploadFiles')->fileInput([
-            ''
+    <?= $form->field($model, 'uploadFiles[]')->fileInput([
+        'multiple' => true,
     ]) ?>
 
     <div class="form-group">
