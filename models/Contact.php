@@ -25,7 +25,7 @@ class Contact extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%contact}}';
+        return '{{%clients_bot_contact}}';
     }
 
     /**

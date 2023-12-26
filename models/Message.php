@@ -2,9 +2,10 @@
 
 namespace app\models;
 
+use app\helpers\FilesHelper;
 use app\traits\BasicBehaviorsTrait;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Url;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "message".
@@ -48,17 +49,22 @@ class Message extends \yii\db\ActiveRecord
             [['name', 'text'], 'string'],
             [['status'], 'default', 'value' => 0],
             [['files'], 'safe'],
-            [['uploadFiles'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg', 'maxSize' => 1024 * 1024 * 2, 'maxFiles' => 6],
+            [['uploadFiles'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg, pdf, mov, mp4, avi', 'maxSize' => 1024 * 1024 * 2, 'maxFiles' => 6],
         ];
     }
 
-    public function getImagePath(): ?string
-    {
-        if (empty($this->photo)) {
-            return null;
-        }
 
-        return Url::to(["/uploads/{$this->photo}"], true);
+    public function afterDelete()
+    {
+        parent::afterDelete();
+
+        if ($this->files) {
+            foreach ($this->getFilesInfo() as $file) {
+                if (file_exists($file['full_path'])) {
+                    unlink($file['full_path']);
+                }
+            }
+        }
     }
 
 
@@ -76,6 +82,26 @@ class Message extends \yii\db\ActiveRecord
             'created_by' => 'Created By',
             'updated_by' => 'Updated By',
         ];
+    }
+
+    /**
+     * @return array{url: string, type: string}[]
+     */
+    public function getFilesInfo(): ?array
+    {
+        if (empty($this->files)) {
+            return null;
+        }
+
+        foreach ($this->files as $file) {
+            $result[] = [
+                'type' => $file['type'],
+                'url' => FilesHelper::getBaseUrl() . $file['path'],
+                'full_path' => FilesHelper::getBaseDir() . $file['path'],
+            ];
+        }
+
+        return $result ?? null;
     }
 
 
@@ -108,18 +134,25 @@ class Message extends \yii\db\ActiveRecord
 
     public function upload(): ?array
     {
-        \Yii::debug('save files');
-        $uploadDir = \Yii::getAlias('@webroot/uploads'); // Use a safe directory outside of webroot
+        $subDir = date('Y-m-d');
+        $uploadDir = FilesHelper::getBaseDir() . $subDir; // Use a safe directory outside of webroot
+
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0777, true); // Create the directory if it doesn't exist
         }
 
         foreach ($this->uploadFiles as $key => $uploadFile) {
+            /** @var UploadedFile $uploadFile */
+
             $fileName = \Yii::$app->security->generateRandomString(10) . '.' . $uploadFile->extension;
-            $filePath = $uploadDir . '/' . $fileName;
+            $filePath = "{$uploadDir}/{$fileName}";
+
             if ($uploadFile->saveAs($filePath)) {
                 $this->uploadFiles[$key] = null;
-                $results[] = $fileName;
+                $results[] = [
+                    'type' => explode('/', $uploadFile->type)[0],
+                    'path' => "{$subDir}/{$fileName}",
+                ];
             }
         }
 

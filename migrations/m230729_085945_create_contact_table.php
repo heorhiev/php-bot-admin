@@ -7,7 +7,7 @@ use yii\db\Migration;
  */
 class m230729_085945_create_contact_table extends Migration
 {
-    const CONTACT = '{{%contact}}';
+    const CONTACT = '{{%clients_bot_contact}}';
 
     /**
      * {@inheritdoc}

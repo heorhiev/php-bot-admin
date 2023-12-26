@@ -5,6 +5,18 @@ namespace app\helpers;
 
 class FilesHelper
 {
+
+    public static function getBaseUrl(): string
+    {
+        return \Yii::$app->params['frontend_host'] . '/uploads/';
+    }
+
+    public static function getBaseDir()
+    {
+        return \Yii::getAlias('@app/web/uploads/');
+    }
+
+
     public function save($files): ?array
     {
         \Yii::debug('save files');

@@ -23,7 +23,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'method' => 'post',
             ],
         ]) ?>
-        <?= Html::a('Обновить', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Изменить', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
@@ -45,14 +45,20 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'attribute' => 'photo',
+                'attribute' => 'files',
                 'format' => 'raw',
                 'value' => function (\app\models\Message $message) {
-                    if ($message->getImagePath() === null) {
+                    $files = $message->getFilesInfo();
+
+                    if ($files === null) {
                         return null;
                     }
 
-                    return Html::img($message->getImagePath(), ['alt' => $message->name, 'style' => 'max-width: 150px']);
+                    foreach ($files as $file) {
+                        $result[] = Html::a($file['url'], $file['url'], ['target' => '_blank']);
+                    }
+
+                    return isset($result) ? join('<br>', $result) : '';
                 }
             ],
             'created_at',

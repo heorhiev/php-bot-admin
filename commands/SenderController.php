@@ -26,7 +26,14 @@ class SenderController extends Controller
                 TelegramHelper::send(Contact::find()->select('id')->column(), $model);
                 $model->setSentStatus();
             } catch (\Throwable $throwable) {
-                \Yii::error(print_r($throwable, 1));
+                $error = join(PHP_EOL, [
+                    $throwable->getMessage(),
+                    $throwable->getFile(),
+                    $throwable->getLine()
+                ]);
+
+                \Yii::error($error);
+                print_r($error);
                 $model->setErrorStatus();
             }
 
