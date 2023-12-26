@@ -63,7 +63,7 @@ class TelegramHelper
         }
 
         if ($media->count()) {
-            self::getBot()->sendMediaGroup($chatId, $files);
+            self::getBot()->sendMediaGroup($chatId, $media);
         }
     }
 
