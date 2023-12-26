@@ -4,12 +4,12 @@ namespace app\models\search;
 
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
-use app\models\Message;
+use app\models\Log;
 
 /**
- * CategorySearch represents the model behind the search form of `app\models\Category`.
+ * LogSearch represents the model behind the search form of `app\models\Log`.
  */
-class MessageSearch extends Message
+class LogSearch extends Log
 {
     /**
      * {@inheritdoc}
@@ -17,9 +17,8 @@ class MessageSearch extends Message
     public function rules()
     {
         return [
-            [['id', 'created_by', 'updated_by'], 'integer'],
-            [['text', 'created_at', 'updated_at'], 'safe'],
-            [['name'], 'string'],
+            [['id', 'status'], 'integer'],
+            [['text', 'created_at'], 'safe'],
         ];
     }
 
@@ -41,7 +40,7 @@ class MessageSearch extends Message
      */
     public function search($params)
     {
-        $query = Message::find();
+        $query = Log::find();
 
         // add conditions that should always apply here
 
@@ -64,12 +63,7 @@ class MessageSearch extends Message
         $query->andFilterWhere([
             'id' => $this->id,
             'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'created_by' => $this->created_by,
-            'updated_by' => $this->updated_by,
         ]);
-
-        $query->andFilterWhere(['like', 'name', $this->name]);
 
         return $dataProvider;
     }

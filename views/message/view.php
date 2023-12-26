@@ -7,7 +7,7 @@ use yii\widgets\DetailView;
 /** @var app\models\Message $model */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Messages', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Сообщения', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>

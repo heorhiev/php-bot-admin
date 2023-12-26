@@ -45,6 +45,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         $items[] = ['label' => 'Войти', 'url' => ['/site/login']];
     } else {
         $items[] = ['label' => 'Сообщения', 'url' => ['/message/index']];
+        $items[] = ['label' => 'Отчеты', 'url' => ['/log/index']];
 
         $items[] = '<li class="nav-item">'
             . Html::beginForm(['/site/logout'])

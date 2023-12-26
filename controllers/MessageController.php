@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Log;
 use app\models\Message;
 use app\models\search\MessageSearch;
 use yii\web\Controller;
@@ -114,6 +115,7 @@ class MessageController extends Controller
         $model = $this->findModel($id);
 
         if ($model->setSendStatus()->save()) {
+            Log::add('Запланирована отправка сообщения ' . $model->id);
             \Yii::$app->session->setFlash('info', 'Запланирована отправка сообщения в ближайшее время');
         } else {
             \Yii::$app->session->setFlash('error', 'Ошибка отправки сообщения');
